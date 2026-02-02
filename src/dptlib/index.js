@@ -37,30 +37,30 @@ const util = require('util');
 const log = require('log-driver').logger;
 
 const dpts = {};
-dpts.DP1 = require('./dpt1.js');
-dpts.DP2 = require('./dpt2.js');
-dpts.DP3 = require('./dpt3.js');
-dpts.DP4 = require('./dpt4.js');
-dpts.DP5 = require('./dpt5.js');
-dpts.DP6 = require('./dpt6.js');
-dpts.DP7 = require('./dpt7.js');
-dpts.DP8 = require('./dpt8.js');
-dpts.DP9 = require('./dpt9.js');
-dpts.DP10 = require('./dpt10.js');
-dpts.DP11 = require('./dpt11.js');
-dpts.DP12 = require('./dpt12.js');
-dpts.DP13 = require('./dpt13.js');
-dpts.DP14 = require('./dpt14.js');
-dpts.DP15 = require('./dpt15.js');
-dpts.DP16 = require('./dpt16.js');
-dpts.DP17 = require('./dpt17.js');
-dpts.DP18 = require('./dpt18.js');
-dpts.DP19 = require('./dpt19.js');
-dpts.DP20 = require('./dpt20.js');
-dpts.DP21 = require('./dpt21.js');
-dpts.DP232 = require('./dpt232.js');
-dpts.DP237 = require('./dpt237.js');
-dpts.DP238 = require('./dpt238.js');
+dpts.DPT1 = require('./dpt1.js');
+dpts.DPT2 = require('./dpt2.js');
+dpts.DPT3 = require('./dpt3.js');
+dpts.DPT4 = require('./dpt4.js');
+dpts.DPT5 = require('./dpt5.js');
+dpts.DPT6 = require('./dpt6.js');
+dpts.DPT7 = require('./dpt7.js');
+dpts.DPT8 = require('./dpt8.js');
+dpts.DPT9 = require('./dpt9.js');
+dpts.DPT10 = require('./dpt10.js');
+dpts.DPT11 = require('./dpt11.js');
+dpts.DPT12 = require('./dpt12.js');
+dpts.DPT13 = require('./dpt13.js');
+dpts.DPT14 = require('./dpt14.js');
+dpts.DPT15 = require('./dpt15.js');
+dpts.DPT16 = require('./dpt16.js');
+dpts.DPT17 = require('./dpt17.js');
+dpts.DPT18 = require('./dpt18.js');
+dpts.DPT19 = require('./dpt19.js');
+dpts.DPT20 = require('./dpt20.js');
+dpts.DPT21 = require('./dpt21.js');
+dpts.DPT232 = require('./dpt232.js');
+dpts.DPT237 = require('./dpt237.js');
+dpts.DPT238 = require('./dpt238.js');
 
 // a generic DPT resolution function
 // DPTs might come in as 9/"9"/"9.001"/"DPT9.001"
@@ -162,7 +162,7 @@ dpts.populateAPDU = (value, apdu, dptid) => {
  * - or by this generic version, which:
  * --  1) checks if the value adheres to the range set from the DPT's bitlength
  */
-dpts.fromBuffer = (buf, dpt) => {
+dpts.fromBuffer = (buf, dpt, subtype) => {
   // sanity check
   if (!dpt) throw util.format('DPT %s not found', dpt);
   // get the raw APDU data for the given JS value
@@ -187,10 +187,13 @@ dpts.fromBuffer = (buf, dpt) => {
     dpt.hasOwnProperty('subtype') &&
     dpt.subtype.hasOwnProperty('scalar_range')
   ) {
+    subtype = dpt.subtype;
+  }
+  if (subtype && subtype.hasOwnProperty('scalar_range')) {
     const [r_min, r_max] = dpt.basetype.hasOwnProperty('range')
       ? dpt.basetype.range
       : [0, Math.pow(2, dpt.basetype.bitlength) - 1];
-    const [s_min, s_max] = dpt.subtype.scalar_range;
+    const [s_min, s_max] = subtype.scalar_range;
     // convert value from its scalar representation
     // e.g. in DPT5.001, 50(%) => 0x7F , 100(%) => 0xFF
     const a = (s_max - s_min) / (r_max - r_min);
