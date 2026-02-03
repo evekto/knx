@@ -168,5 +168,7 @@ declare module "knx" {
     static DPT238: DatapointType
 
     static fromBuffer: (buf: Buffer, dpt: DatapointType, subtype?: DatapointSubtype) => KnxValue
+
+    static populateAPDU: (value: KnxValue, apdu: Object, dptid: string) => void
   }
 }
