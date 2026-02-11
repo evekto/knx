@@ -41,7 +41,8 @@ exports.formatAPDU = (value) => {
   // find the minimum exponent that will upsize the normalized mantissa (0,5 to 1 range)
   // in order to fit in 11 bits ([-2048, 2047])
   let max_mantissa = 0;
-  for (e = exponent; e >= -15; e--) {
+  let e = exponent;
+  for (; e >= -15; e--) {
     max_mantissa = ldexp(100 * mantissa, e);
     if (max_mantissa > -2048 && max_mantissa < 2047) break;
   }
