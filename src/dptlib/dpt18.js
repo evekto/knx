@@ -35,6 +35,9 @@ exports.formatAPDU = function (value) {
             var sVal = value.save_recall + "0" + sSceneNumberbinary.padStart(6, "0");
             //console.log("BANANA SEND HEX " + sVal.toString("hex").toUpperCase())
             apdu_data[0] = parseInt(sVal, 2);// 0b10111111;
+        } else if (typeof value == 'number') {
+            const rounded = Math.round(value);
+            apdu_data[0] = Math.max(Math.min(rounded, 255), 0);
         } else {
             log.error("DPT18: Must supply a value object of {save_recall, scenenumber}");
         }
@@ -47,12 +50,7 @@ exports.fromBuffer = function (buf) {
     if (buf.length != 1) {
         log.error("DP18: Buffer should be 1 byte long");
     } else {
-        var sBit = (parseInt(buf.toString("hex").toUpperCase(), 16).toString(2)).padStart(8, '0'); // Get bit from hex
-        //console.log("BANANA BUFF RECEIVE BIT " + sBit)
-        return {
-            save_recall: sBit.substring(0, 1),
-            scenenumber: parseInt(sBit.substring(2), 2) + 1
-        }
+        return buf[0];
     };
 }
 
